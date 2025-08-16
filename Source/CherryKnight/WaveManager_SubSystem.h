@@ -15,20 +15,30 @@ class CHERRYKNIGHT_API UWaveManager_Subsystem : public UWorldSubsystem
 	GENERATED_BODY()
 private:
 	int waveNumber = 1;
-	int spawnTokens = 5;
+	int spawnTokens = 25;
 	float spawnTokenMultiplier = 1.25;
 	TArray<AActor*> spawnerPoints;
+	TArray<AActor*> activeEnemies;
 
 public:
-	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Spawn Wave"), Category = "Wave Management")
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Spawn Enemies For Wave"), Category = "Wave Management")
 	bool SpawnWave();
 
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Increase Spawn Tokens"), Category = "Wave Management")
 	void IncreaseSpawnTokens();
+
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Start Next Wave"), Category = "Wave Management")
+	void StartNextWave();
 
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Get Wave Number"), Category = "Wave Management")
 	int GetWaveNumber();
 
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Add Spawner Point"), Category = "Wave Management")
 	bool AddSpawnerPoint(AActor* SpawnerPoint);
+
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Add Active Enemy"), Category = "Wave Management")
+	bool AddActiveEnemy(AActor* Enemy);
+
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Remove Active Enemy"), Category = "Wave Management")
+	bool RemoveActiveEnemy(AActor* Enemy);
 };
