@@ -39,6 +39,13 @@ void UWaveManager_Subsystem::IncreaseSpawnTokens()
 	spawnTokens = floor(spawnTokens * spawnTokenMultiplier);
 }
 
+void UWaveManager_Subsystem::StartNextWave()
+{
+	SpawnWave();
+
+	IncreaseSpawnTokens();
+}
+
 int UWaveManager_Subsystem::GetWaveNumber()
 {
 	return waveNumber;
@@ -52,4 +59,29 @@ bool UWaveManager_Subsystem::AddSpawnerPoint(AActor* SpawnerPoint)
 		return true;
 	}
 	return false;
+}
+
+bool UWaveManager_Subsystem::AddActiveEnemy(AActor* Enemy)
+{
+	if (activeEnemies.AddUnique(Enemy) == INDEX_NONE)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool UWaveManager_Subsystem::RemoveActiveEnemy(AActor* Enemy)
+{
+	if (activeEnemies.Remove(Enemy) == 0)
+	{
+		return false;
+	}
+
+	if (activeEnemies.Num() == 0)
+	{
+		StartNextWave();
+	}
+
+	return true;
 }
