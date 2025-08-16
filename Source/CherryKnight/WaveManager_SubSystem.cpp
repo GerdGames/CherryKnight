@@ -9,19 +9,27 @@ bool UWaveManager_Subsystem::SpawnWave()
 	int waveTokens = spawnTokens;
 	int spawnedEnemies = 0;
 
-	while (waveTokens > 0)
+	if (spawnerPoints.Num() > 0)
 	{
-		AActor* nextSpawner = spawnerPoints[(spawnedEnemies % spawnerPoints.Num())];
-		if(nextSpawner && nextSpawner->Implements<USpawner_Interface>())
+		while (waveTokens > 0)
 		{
-			int nextEnemyCost = ISpawner_Interface::Execute_SpawnEnemy(nextSpawner, waveTokens);
-			waveTokens -= nextEnemyCost;
+			AActor* nextSpawner = spawnerPoints[(spawnedEnemies % spawnerPoints.Num())];
+			if (nextSpawner && nextSpawner->Implements<USpawner_Interface>())
+			{
+				int nextEnemyCost = ISpawner_Interface::Execute_SpawnEnemy(nextSpawner, waveTokens);
+				waveTokens -= nextEnemyCost;
+				spawnedEnemies++;
+			}
+			else
+			{
+				return false;
+			}
 		}
 
-		spawnedEnemies++;
+		return true;
 	}
 
-	return true;
+	return false;
 }
 
 void UWaveManager_Subsystem::IncreaseSpawnTokens()
