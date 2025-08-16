@@ -73,3 +73,8 @@ Plugins/**/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+Saved/Autosaves/PackageRestoreData.json
+Saved/AutoScreenshot.png
+Saved/Config/WindowsEditor/EditorPerProjectUserSettings.ini
+Saved/Logs/CherryKnight.log
+Saved/ShaderDebugInfo/PCD3D_SM6/WorldGridMaterial_5b9d737e1f0f285c/Default/DDCKey-Editor.txt
