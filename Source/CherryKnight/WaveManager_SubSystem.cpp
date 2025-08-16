@@ -9,6 +9,8 @@ bool UWaveManager_Subsystem::SpawnWave()
 	int waveTokens = spawnTokens;
 	int spawnedEnemies = 0;
 
+	waveNumber++;
+
 	if (spawnerPoints.Num() > 0)
 	{
 		while (waveTokens > 0)
