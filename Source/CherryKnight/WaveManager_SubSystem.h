@@ -16,7 +16,10 @@ class CHERRYKNIGHT_API UWaveManager_Subsystem : public UWorldSubsystem
 private:
 	int waveNumber = 1;
 	int spawnTokens = 25;
-	float spawnTokenMultiplier = 1.25;
+	int enemiesSpawnedByLastWave = 0;
+	int enemiesKilledSinceLastWave = 0;
+	float spawnTokenMultiplier = 1.1;
+	float killsForNextWavePercentage = 0.75;
 	TArray<AActor*> spawnerPoints;
 	TArray<AActor*> activeEnemies;
 

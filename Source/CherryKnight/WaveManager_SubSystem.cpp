@@ -7,7 +7,8 @@
 bool UWaveManager_Subsystem::SpawnWave()
 {
 	int waveTokens = spawnTokens;
-	int spawnedEnemies = 0;
+	enemiesSpawnedByLastWave = 0;
+	enemiesKilledSinceLastWave = 0;
 
 	waveNumber++;
 
@@ -15,12 +16,12 @@ bool UWaveManager_Subsystem::SpawnWave()
 	{
 		while (waveTokens > 0)
 		{
-			AActor* nextSpawner = spawnerPoints[(spawnedEnemies % spawnerPoints.Num())];
+			AActor* nextSpawner = spawnerPoints[(enemiesSpawnedByLastWave % spawnerPoints.Num())];
 			if (nextSpawner && nextSpawner->Implements<USpawner_Interface>())
 			{
 				int nextEnemyCost = ISpawner_Interface::Execute_SpawnEnemy(nextSpawner, waveTokens);
 				waveTokens -= nextEnemyCost;
-				spawnedEnemies++;
+				enemiesSpawnedByLastWave++;
 			}
 			else
 			{
@@ -78,7 +79,9 @@ bool UWaveManager_Subsystem::RemoveActiveEnemy(AActor* Enemy)
 		return false;
 	}
 
-	if (activeEnemies.Num() == 0)
+	enemiesKilledSinceLastWave++;
+
+	if (enemiesKilledSinceLastWave >= (enemiesSpawnedByLastWave * killsForNextWavePercentage))
 	{
 		StartNextWave();
 	}
