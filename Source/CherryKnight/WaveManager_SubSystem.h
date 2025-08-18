@@ -15,7 +15,7 @@ class CHERRYKNIGHT_API UWaveManager_Subsystem : public UWorldSubsystem
 	GENERATED_BODY()
 private:
 	int waveNumber = 1;
-	int spawnTokens = 25;
+	int spawnTokens = 50;
 	int enemiesSpawnedByLastWave = 0;
 	int enemiesKilledSinceLastWave = 0;
 	float spawnTokenMultiplier = 1.1;
