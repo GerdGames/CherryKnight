@@ -18,13 +18,16 @@ private:
 	int spawnTokens = 50;
 	int enemiesSpawnedByLastWave = 0;
 	int enemiesKilledSinceLastWave = 0;
-	float spawnTokenMultiplier = 1.1;
-	float killsForNextWavePercentage = 0.75;
+	float nextWaveSpawnTokenMultiplier = 1.1;
+	float percentKillsForNextWave = 0.75;
 	TArray<AActor*> spawnerPoints;
 	TArray<AActor*> activeEnemies;
 	FTimerHandle SpawnDelayTimer;
 
 public:
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Setup and Spawn First Wave"), Category = "Wave Management")
+	void SetupAndSpawnFirstWave(int startingSpawnTokens, float spawnTokenMultiplier, float percentKillsForWave);
+
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Spawn Enemies For Wave"), Category = "Wave Management")
 	bool SpawnWave();
 

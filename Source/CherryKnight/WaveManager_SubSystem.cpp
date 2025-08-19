@@ -4,6 +4,18 @@
 #include "WaveManager_Subsystem.h"
 #include "Spawner_Interface.h"
 
+void UWaveManager_Subsystem::SetupAndSpawnFirstWave(int startingSpawnTokens, float spawnTokenMultiplier, float percentKillsForWave)
+{
+	waveNumber = 1;
+	enemiesSpawnedByLastWave = 0;
+	enemiesKilledSinceLastWave = 0;
+
+	spawnTokens = startingSpawnTokens;
+	nextWaveSpawnTokenMultiplier = spawnTokenMultiplier;
+	percentKillsForNextWave = percentKillsForWave;
+	SpawnWave();
+}
+
 bool UWaveManager_Subsystem::SpawnWave()
 {
 	int waveTokens = spawnTokens;
@@ -37,7 +49,7 @@ bool UWaveManager_Subsystem::SpawnWave()
 
 void UWaveManager_Subsystem::IncreaseSpawnTokens()
 {
-	spawnTokens = floor(spawnTokens * spawnTokenMultiplier);
+	spawnTokens = floor(spawnTokens * nextWaveSpawnTokenMultiplier);
 }
 
 void UWaveManager_Subsystem::StartNextWave()
@@ -81,7 +93,7 @@ bool UWaveManager_Subsystem::RemoveActiveEnemy(AActor* Enemy)
 
 	enemiesKilledSinceLastWave++;
 
-	if (enemiesKilledSinceLastWave >= (enemiesSpawnedByLastWave * killsForNextWavePercentage))
+	if (enemiesKilledSinceLastWave >= (enemiesSpawnedByLastWave * percentKillsForNextWave))
 	{
 		GetWorld()->GetTimerManager().SetTimer(SpawnDelayTimer, this, &UWaveManager_Subsystem::StartNextWave, 1.0f, false, 1.0f);
 	}
