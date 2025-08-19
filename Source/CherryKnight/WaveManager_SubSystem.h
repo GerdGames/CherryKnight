@@ -22,6 +22,7 @@ private:
 	float killsForNextWavePercentage = 0.75;
 	TArray<AActor*> spawnerPoints;
 	TArray<AActor*> activeEnemies;
+	FTimerHandle SpawnDelayTimer;
 
 public:
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Spawn Enemies For Wave"), Category = "Wave Management")

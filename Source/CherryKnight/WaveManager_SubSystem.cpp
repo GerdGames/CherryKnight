@@ -83,7 +83,7 @@ bool UWaveManager_Subsystem::RemoveActiveEnemy(AActor* Enemy)
 
 	if (enemiesKilledSinceLastWave >= (enemiesSpawnedByLastWave * killsForNextWavePercentage))
 	{
-		StartNextWave();
+		GetWorld()->GetTimerManager().SetTimer(SpawnDelayTimer, this, &UWaveManager_Subsystem::StartNextWave, 1.0f, false, 1.0f);
 	}
 
 	return true;
