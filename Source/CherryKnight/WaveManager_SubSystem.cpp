@@ -4,47 +4,48 @@
 #include "WaveManager_Subsystem.h"
 #include "Spawner_Interface.h"
 
-void UWaveManager_Subsystem::SetupAndSpawnFirstWave(int startingSpawnTokens, float spawnTokenMultiplier, float percentKillsForWave)
+void UWaveManager_Subsystem::SetupAndSpawnFirstWave(int startingSpawnTokens, float spawnTokenMultiplier, float percentKillsForWave, int maxEnemies)
 {
 	waveNumber = 1;
-	enemiesSpawnedByLastWave = 0;
+	totalEnemiesSpawned = 0;
+	totalEnemiesKilled = 0;
+	enemiesSpawnedSinceLastWave = 0;
 	enemiesKilledSinceLastWave = 0;
 
+	maxActiveEnemies = maxEnemies;
 	spawnTokens = startingSpawnTokens;
 	nextWaveSpawnTokenMultiplier = spawnTokenMultiplier;
 	percentKillsForNextWave = percentKillsForWave;
 	SpawnWave();
 }
 
-bool UWaveManager_Subsystem::SpawnWave()
+void UWaveManager_Subsystem::SpawnWave()
 {
-	int waveTokens = spawnTokens;
-	enemiesSpawnedByLastWave = 0;
+	enemiesSpawnedSinceLastWave = 0;
 	enemiesKilledSinceLastWave = 0;
+	availableTokens += spawnTokens;
 
 	waveNumber++;
 
+	SpawnEnemies();
+}
+
+void UWaveManager_Subsystem::SpawnEnemies()
+{
 	if (spawnerPoints.Num() > 0)
 	{
-		while (waveTokens > 0)
+		while ((availableTokens > 0) && (activeEnemies.Num() < maxActiveEnemies))
 		{
-			AActor* nextSpawner = spawnerPoints[(enemiesSpawnedByLastWave % spawnerPoints.Num())];
+			AActor* nextSpawner = spawnerPoints[(totalEnemiesSpawned % spawnerPoints.Num())];
 			if (nextSpawner && nextSpawner->Implements<USpawner_Interface>())
 			{
-				int nextEnemyCost = ISpawner_Interface::Execute_SpawnEnemy(nextSpawner, waveTokens);
-				waveTokens -= nextEnemyCost;
-				enemiesSpawnedByLastWave++;
-			}
-			else
-			{
-				return false;
+				int nextEnemyCost = ISpawner_Interface::Execute_SpawnEnemy(nextSpawner, availableTokens);
+				availableTokens -= nextEnemyCost;
+				enemiesSpawnedSinceLastWave++;
+				totalEnemiesSpawned++;
 			}
 		}
-
-		return true;
 	}
-
-	return false;
 }
 
 void UWaveManager_Subsystem::IncreaseSpawnTokens()
@@ -91,11 +92,17 @@ bool UWaveManager_Subsystem::RemoveActiveEnemy(AActor* Enemy)
 		return false;
 	}
 
+	totalEnemiesKilled++;
 	enemiesKilledSinceLastWave++;
 
-	if (enemiesKilledSinceLastWave >= (enemiesSpawnedByLastWave * percentKillsForNextWave))
+	//If percent of enemies killed since last wave is reached, and if there are very few available tokens spawn the next wave, and we aren't already trying to spawn the next wave
+	if ((enemiesKilledSinceLastWave >= (enemiesSpawnedSinceLastWave * percentKillsForNextWave)) && (availableTokens < 10) && !(GetWorld()->GetTimerManager().IsTimerActive(SpawnDelayTimer)))
 	{
 		GetWorld()->GetTimerManager().SetTimer(SpawnDelayTimer, this, &UWaveManager_Subsystem::StartNextWave, 1.0f, false, 1.0f);
+	}
+	else if(availableTokens > 0)
+	{
+		SpawnEnemies();
 	}
 
 	return true;

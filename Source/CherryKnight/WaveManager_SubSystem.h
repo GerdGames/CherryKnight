@@ -16,8 +16,12 @@ class CHERRYKNIGHT_API UWaveManager_Subsystem : public UWorldSubsystem
 private:
 	int waveNumber = 1;
 	int spawnTokens = 50;
-	int enemiesSpawnedByLastWave = 0;
+	int availableTokens = 0;
+	int totalEnemiesSpawned = 0;
+	int totalEnemiesKilled = 0;
+	int enemiesSpawnedSinceLastWave = 0;
 	int enemiesKilledSinceLastWave = 0;
+	int maxActiveEnemies = 10;
 	float nextWaveSpawnTokenMultiplier = 1.1;
 	float percentKillsForNextWave = 0.75;
 	TArray<AActor*> spawnerPoints;
@@ -26,10 +30,12 @@ private:
 
 public:
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Setup and Spawn First Wave"), Category = "Wave Management")
-	void SetupAndSpawnFirstWave(int startingSpawnTokens, float spawnTokenMultiplier, float percentKillsForWave);
+	void SetupAndSpawnFirstWave(int startingSpawnTokens, float spawnTokenMultiplier, float percentKillsForWave, int maxEnemies);
 
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Spawn Enemies For Wave"), Category = "Wave Management")
-	bool SpawnWave();
+	void SpawnWave();
+
+	void SpawnEnemies();
 
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Increase Spawn Tokens"), Category = "Wave Management")
 	void IncreaseSpawnTokens();
